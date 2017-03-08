@@ -1,0 +1,40 @@
+﻿@model List<ModuloAjax.Controllers.Persona>
+<h3>
+    Sección cargada con Ajax.ActionLink
+</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                Nombre
+            </th>
+            <th>
+                Edad
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var persona in Model)
+        {
+            <tr>
+                <td>
+                    @Ajax.ActionLink(persona.Nombre, "DetallePersona", new { Nombre = persona.Nombre }, new AjaxOptions()
+           {
+               HttpMethod = "GET",
+               InsertionMode = InsertionMode.Replace,
+               UpdateTargetId = "DetallePersona"
+           })
+                </td>
+                <td>
+                    @persona.Edad
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="DetallePersona">
+
+</div>
+

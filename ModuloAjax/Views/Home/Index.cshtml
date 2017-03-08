@@ -1,0 +1,83 @@
+﻿
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<h3>Ejemplo: jQuery UI - Slider</h3>
+
+<p>
+    <label for="amount">Rango de Edad:</label>
+    <input type="text" id="edades" readonly style="border:0; color:#f6931f; font-weight:bold;">
+</p>
+
+<div id="slider-range"></div>
+
+@using (Ajax.BeginForm("CambioSlider", null, new AjaxOptions()
+{
+    HttpMethod = "POST",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "resultados"
+
+}, new { id = "formSlider" }))
+{
+    <input type="hidden" name="min" id="min" />
+    <input type="hidden" name="max" id="max" />
+}
+
+@*<img src="~/Content/images/loading.gif" style="display:none; width:80px;" id="loading" />*@
+<div id="resultados">
+
+</div>
+
+@section scripts{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+
+    <script>
+        $(function () {
+            var minimoInicial = 21;
+            var maximoInicial = 35;
+            var maximoAnterior = minimoInicial;
+            var minimoAnterior = maximoInicial;
+            
+            $("#slider-range").slider({
+                range: true,
+                min: 18,
+                max: 61,
+                values: [minimoInicial, maximoInicial],
+                create: function (event, ui) {
+                    dispararFormularioSlider(minimoInicial, maximoInicial);
+                },
+                slide: function (event, ui) {
+                    var minimo = ui.values[0];
+                    var maximo = ui.values[1];
+                    if (maximo === 61) {
+                        $("#edades").val(minimo + " - " + (maximo - 1) + "+");
+                    } else {
+                        $("#edades").val(minimo + " - " + maximo);
+                    }
+                },
+                change: function (event, ui) {
+                    var minimo = ui.values[0];
+                    var maximo = ui.values[1];
+
+                    if (minimo !== minimoAnterior || maximo !== maximoAnterior) {
+                        minimoAnterior = minimo;
+                        maximoAnterior = maximo;
+                        dispararFormularioSlider(minimo, maximo);
+                    }
+                }
+            });
+
+            $("#edades").val($("#slider-range").slider("values", 0) +
+              " - " + $("#slider-range").slider("values", 1));
+
+           
+            function dispararFormularioSlider(min, max) {
+                $("#min").val(min);
+                $("#max").val(max);
+                $("#formSlider").submit();
+            }
+        });
+    </script>
+}
